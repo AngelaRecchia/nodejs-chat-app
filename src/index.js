@@ -12,16 +12,22 @@ const publicDirPath = path.join(__dirname, '../public')
 
 app.use(express.static(publicDirPath))
 
-let count = 0
-
 io.on('connection', (socket) => {
     console.log('Websocket connection')
 
-    socket.emit('countUpdated', count)
+    // socket emits to one connection
+    socket.emit('message', 'Welcome')
 
-    socket.on('increment', () => {
-        count++
-        io.emit('countUpdated', count)
+    // broadcast: send to all clients except det connection
+    socket.broadcast.emit('message', 'A new user has joined the chat')
+
+    socket.on('sendMsg', (msg) => {
+        // io emits to EVERY connected client
+        io.emit('message', msg)
+    })
+
+    socket.on('disconnect', () => {
+        io.emit('message', 'A user has left the chat')
     })
 })
 
