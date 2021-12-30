@@ -5,11 +5,33 @@ const $msgForm = document.querySelector('form')
 const $msgFormInput = document.querySelector('input')
 const $msgFormButton = document.querySelector('button')
 const $msgFormGeo = document.querySelector('#send-location')
+const $msgs = document.querySelector('#msgs')
 
+// templates
+const msgTemplate = document.querySelector('#msg-template').innerHTML
+const locationTemplate = document.querySelector('#location-template').innerHTML
+
+// receive message
 socket.on('message', (msg) => {
     console.log(msg);
+    const html = Mustache.render(msgTemplate, {
+        msg: msg.text,
+        createdAt: moment(msg.createdAt).format('HH:mm')
+    })
+    $msgs.insertAdjacentHTML('afterend', html)
 })
 
+// receive location
+socket.on('locationMessage', (msg) => {
+    console.log(msg.url);
+    const html = Mustache.render(locationTemplate, {
+        url: msg.url,
+        createdAt: moment(msg.createdAt).format('HH:mm')
+    })
+    $msgs.insertAdjacentHTML('afterend', html)
+})
+
+// send message
 $msgForm.onsubmit = (e) => {
     e.preventDefault()
 
