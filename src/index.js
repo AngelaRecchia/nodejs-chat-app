@@ -20,11 +20,16 @@ io.on("connection", (socket) => {
 	// socket emits to one connection
 	socket.emit("message", generateMessage("Welcome!"))
 
-	// broadcast: send to all clients except det connection
-	socket.broadcast.emit(
+    // io.to.emit: emit events in specific room
+    socket.on('join', ({username, room}) => {
+        socket.join(room)
+
+    // broadcast: send to all clients except det connection
+	socket.broadcast.to(room).emit(
 		"message",
-		generateMessage("A new user has joined the chat")
+		generateMessage(`${username} has joined the room`)
 	)
+    })
 
 	socket.on("sendMsg", (message, callback) => {
 		const filter = new Filter()

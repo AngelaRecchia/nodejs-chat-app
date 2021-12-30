@@ -5,11 +5,16 @@ const $msgForm = document.querySelector("form")
 const $msgFormInput = document.querySelector("input")
 const $msgFormButton = document.querySelector("button")
 const $msgFormGeo = document.querySelector("#send-location")
-const $msgs = document.getElementById('messages')
+const $msgs = document.getElementById("messages")
 
 // templates
 const msgTemplate = document.querySelector("#msg-template").innerHTML
 const locationTemplate = document.querySelector("#location-template").innerHTML
+
+// options
+const { username, room } = Qs.parse(location.search, {
+	ignoreQueryPrefix: true,
+})
 
 // receive message
 socket.on("message", (msg) => {
@@ -62,3 +67,5 @@ $msgFormGeo.addEventListener("click", () => {
 		})
 	})
 })
+
+socket.emit("join", { username, room })
